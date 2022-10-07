@@ -182,7 +182,7 @@
                         <div class="col-md-9">
                             <ul class="list-unstyled" id="list-of-files-and-directories"></ul>
                         </div>
-                        <div class="col-md-3">  
+                        <div class="col-md-3">
                             <button id="btn-send-file" type="button" class="btn btn-primary btn-block btn-sm">Enviar arquivos</button>
                             <input type="file" id="files" style="display:none;" multiple>
                             <button id="btn-new-folder" type="button" class="btn btn-link btn-block btn-sm btn-icon"><i class="ion-android-folder-open"></i>Nova Pasta</button>
@@ -216,15 +216,9 @@
         </div>
     </div>
 
-    <script type="module">
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics.js";
-        
-      </script>
-
+    <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
     <script src="src/controller/DropBoxController.js"></script>
-    <script src="src/index.js"></script>
+    <script src="src/index.js" ></script>
 
 </body>
 
