@@ -58,12 +58,25 @@
             let file = JSON.parse(li.dataset.file);
             let key = li.datase.key;
 
-            let formData = new FormData();
+            promises.push(new Promise((resolve, reject)=>{
 
-            formData.append('path', file.path);
-            formData.append('key', key);
+              firebase.storage().ref(this.currentFolder.join('/')).child(file.name);
 
-            promises.push(this.ajax('/file', 'DELETE', formData));
+              fileRef.delete().then(()=>{
+
+                resolve({
+                    fields:{
+                      key
+                    }
+                });
+
+              }).catch(err=>{
+                  
+                reject(err);  
+
+              });
+
+            }));
 
           });
 
@@ -84,7 +97,7 @@
                 type:'folder',
                 path:this.currentFolder.join('/')
 
-              })
+              });
 
             }
 
