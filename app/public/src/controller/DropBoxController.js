@@ -50,17 +50,18 @@ class DropBoxController {
     this.getSelection().forEach(li=>{
 
       let file = JSON.parse(li.dataset.file);
+      let key = li.datase.key;
 
       let formData = new FormData();
 
       formData.append('path', file.path);
-      formData.append('key', file.key);
+      formData.append('key', key);
 
       promises.push(this.ajax('/file', 'DELETE', formData));
 
-      return Promise.all(promises);
-
     });
+
+    return Promise.all(promises);
 
   }
 
@@ -70,9 +71,18 @@ class DropBoxController {
 
       this.removeTask().then(responses=>{
 
-        console.log('responses');
+        responses.forEach(response=>{
 
+          if (responde.fields.key) {
+
+            this.getFirebaseRef().child(response.fields.key).remove();
+
+          }
+
+        });
+ 
       }).catch(err=>{
+
           console.error(err);
 
       });
@@ -139,7 +149,7 @@ class DropBoxController {
   modalShow(show = true) {
     this.snackModalEl.style.display = (show) ? "block" : "none"
   }
-
+ 
   ajax(url, method = 'GET', formData = new FormData(), onprogress = function(){}, onloadstart = function(){} ){
 
     return new Promise((resolve, reject)=>{
@@ -178,6 +188,7 @@ class DropBoxController {
   }
 
   uploadTask(files) {
+
     let promises = [];
 
     [...files].forEach(file => {
