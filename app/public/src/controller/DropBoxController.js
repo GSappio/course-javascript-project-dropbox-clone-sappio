@@ -43,7 +43,40 @@ class DropBoxController {
 
   }
 
+  removeTask(){
+
+    let promises = [];
+
+    this.getSelection().forEach(li=>{
+
+      let file = JSON.parse(li.dataset.file);
+
+      promises.push(new Promise((resolve, reject)=>{
+
+
+
+      }));
+
+      return Promise.all(promises);
+
+    });
+
+  }
+
   initEvents() {
+
+    this.btnDelete.addEventListener('click', e=>{
+
+      this.removeTask().then(responses=>{
+
+        console.log('responses');
+
+      }).catch(err=>{
+          console.error(err);
+
+      });
+
+    });
 
     this.listFilesEl.addEventListener('selectionchange', e=>{
 
@@ -106,42 +139,63 @@ class DropBoxController {
     this.snackModalEl.style.display = (show) ? "block" : "none"
   }
 
+  ajax(url, method = 'GET', formData = new FormData(), onprogress = function(){}, onloadstart = function(){} ){
+
+    return new Promise((resolve, reject)=>{
+
+      let ajax = new XMLHttpRequest();
+
+      ajax.open(method, url);
+  
+      ajax.onload = event => {
+  
+        try {
+          resolve(JSON.parse(ajax.responseText))
+        } catch (e) {
+
+          reject(e)
+
+        }
+      }
+  
+      ajax.onerror = event => {
+        reject(event)
+      }
+  
+      ajax.upload.onprogress = onprogress;
+
+      onloadstart();
+
+  
+      this.startUploadTime = Date.now();
+  
+      ajax.send(formData)
+
+
+    });
+
+  }
+
   uploadTask(files) {
     let promises = [];
 
     [...files].forEach(file => {
-      promises.push(new Promise((resolve, reject) => {
-        let ajax = new XMLHttpRequest();
 
-        ajax.open('POST', '/upload')
+      let formData = new FormData();
 
-        ajax.onload = event => {
+      formData.append('input-file', file);
 
-          try {
-            resolve(JSON.parse(ajax.responseText))
-          } catch (e) {
-            reject(e)
-          }
-        }
+      promises.push(this.ajax('/upload', 'POST', formData, ()=>{
 
-        ajax.onerror = event => {
-          reject(event)
-        }
+        this.uploadProgress(event, file);
 
-        ajax.upload.onprogress = event => {
-          this.uploadProgress(event, file)
-        }
+      }, ()=>{
 
-        let formData = new FormData()
+        this.startUploadTime = Date.now(); 
 
-        formData.append('input-file', file)
+         }));
 
-        this.startUploadTime = Date.now();
-
-        ajax.send(formData)
-
-      }))
-    })
+    });
 
     return Promise.all(promises)
   }
@@ -374,7 +428,6 @@ class DropBoxController {
   initEventsLi(li) {
     li.addEventListener('click', e => {
 
-    this.onselectionchange = new Event('selectionchance')
 
     this.listFilesEl.dispatchEvent(this.onselectionchange);
 
@@ -414,7 +467,7 @@ class DropBoxController {
       li.classList.toggle('selected')
 
       this.listFilesEl.dispatchEvent(this.onselectionchange);
-      
+
     })
   }
 
